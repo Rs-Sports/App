@@ -1,15 +1,10 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>RS SPORTSFy</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RS SPORTS</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
   <style>
     body {
       background: #111;
@@ -168,56 +163,71 @@
     <div class="icon">🔄 🔍</div>
   </header>
 
-  <div id="loader" class="loader">
-    Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
-  </div>
+  <!-- ✅ Loader -->
+  <div id="loader" class="loader">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
 
+  <!-- ✅ M3U8 Video Player -->
   <video id="hlsPlayer" controls autoplay></video>
 
+  <!-- ✅ Marquee below video -->
   <div class="marquee">
-    <span>Loading marquee...</span>
+    <span>Thanks for downloading RS SPORTS! Enjoy live matches, updates and more.</span>
   </div>
 
+  <!-- ✅ Category buttons -->
   <div class="category-tabs">
     <button class="active" onclick="filterMatches('all')">All</button>
     <button onclick="filterMatches('cricket')">🏏 Cricket</button>
     <button onclick="filterMatches('football')">⚽ Football</button>
   </div>
 
-  <div id="matches">
-    <!-- ম্যাচ কার্ডগুলো এখানে ডাইনামিক আসবে -->
-  </div>
+  <!-- ✅ Match Cards -->
+  <div id="matches"></div>
 
   <script>
-    // Firebase config বসাও এখানে
-    const firebaseConfig = {
-      apiKey: "তোমার_API_KEY",
-      authDomain: "তোমার_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://তোমার_PROJECT_ID.firebaseio.com",
-      projectId: "তোমার_PROJECT_ID",
-      storageBucket: "তোমার_PROJECT_ID.appspot.com",
-      messagingSenderId: "তোমার_SENDER_ID",
-      appId: "তোমার_APP_ID"
-    };
+    fetch('data.json')  // তোমার .json ফাইলের পাথ
+      .then(response => response.json())
+      .then(data => {
+        // ভিডিও প্লেয়ার লিংক সেট করা
+        playMatch(data.defaultStream);
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+        // ম্যার্কি টেক্সট আপডেট
+        document.querySelector('.marquee span').innerText = data.marquee;
 
-    const video = document.getElementById('hlsPlayer');
-    const loader = document.getElementById('loader');
-    const matchesDiv = document.getElementById('matches');
-    const marqueeSpan = document.querySelector('.marquee span');
+        // ম্যাচ কার্ড তৈরি
+        const matchesDiv = document.getElementById('matches');
+        matchesDiv.innerHTML = ''; // আগে যা ছিল সব মুছে দাও
 
-    let hls;
+        Object.values(data.matches).forEach(match => {
+          const card = document.createElement('div');
+          card.className = `match-card ${match.category}`;
+          card.onclick = () => playMatch(match.streamURL);
 
-    // ভিডিও প্লে করার ফাংশন
+          card.innerHTML = `
+            <div class="match-meta">
+              <span>${match.category.charAt(0).toUpperCase() + match.category.slice(1)} | ${match.title}</span>
+              <span style="color: ${match.timeColor};">${match.time}</span>
+            </div>
+            <div class="teams">
+              <img src="${match.team1Logo}" class="team-logo" alt="${match.team1Name}">
+              <div class="vs-container">
+                ${match.isLive ? '<div class="live-indicator">🔴 LIVE</div>' : ''}
+                <div class="vs-text">${match.team1Name} VS ${match.team2Name}</div>
+              </div>
+              <img src="${match.team2Logo}" class="team-logo" alt="${match.team2Name}">
+            </div>
+          `;
+
+          matchesDiv.appendChild(card);
+        });
+      });
+
     function playMatch(url) {
+      const video = document.getElementById('hlsPlayer');
+      const loader = document.getElementById('loader');
       loader.style.display = 'block';
 
-      if (hls) {
-        hls.destroy();
-      }
-
+      let hls;
       if (Hls.isSupported()) {
         hls = new Hls();
         hls.loadSource(url);
@@ -230,7 +240,6 @@
         hls.on(Hls.Events.ERROR, function () {
           loader.innerText = '❌ Failed to load stream';
         });
-
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = url;
         video.addEventListener('loadedmetadata', function () {
@@ -243,7 +252,6 @@
       }
     }
 
-    // ম্যাচ ফিল্টার করার ফাংশন
     function filterMatches(category) {
       const allCards = document.querySelectorAll('.match-card');
       const buttons = document.querySelectorAll('.category-tabs button');
@@ -258,63 +266,6 @@
           card.style.display = 'none';
         }
       });
-    }
-
-    // Firebase থেকে ডাইনামিক ম্যাচ কার্ডগুলো নিয়ে আসা
-    db.ref('matches').on('value', snapshot => {
-      const data = snapshot.val();
-      matchesDiv.innerHTML = '';
-
-      if (!data) {
-        matchesDiv.innerHTML = '<p style="text-align:center; padding:20px;">No matches found</p>';
-        return;
-      }
-
-      for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-          const match = data[key];
-          const card = document.createElement('div');
-          card.className = 'match-card ' + (match.category || '');
-          card.onclick = () => playMatch(match.streamURL);
-
-          card.innerHTML = `
-            <div class="match-meta">
-              <span>${match.category ? capitalize(match.category) : ''} | ${match.title || ''}</span>
-              <span style="color: ${match.timeColor || 'white'};">${match.time || ''}</span>
-            </div>
-            <div class="teams">
-              <img src="${match.team1Logo}" class="team-logo" alt="Team 1" />
-              <div class="vs-container">
-                <div class="live-indicator">${match.isLive ? '🔴 LIVE' : ''}</div>
-                <div class="vs-text">${match.team1Name} VS ${match.team2Name}</div>
-              </div>
-              <img src="${match.team2Logo}" class="team-logo" alt="Team 2" />
-            </div>
-          `;
-
-          matchesDiv.appendChild(card);
-        }
-      }
-    });
-
-    // মারকিকি টেক্সট Firebase থেকে আনো
-    db.ref('marquee').on('value', snapshot => {
-      const text = snapshot.val();
-      marqueeSpan.innerText = text || 'Thanks for downloading RS SPORTS! Enjoy live matches, updates and more.';
-    });
-
-    // ডিফল্ট ভিডিও স্ট্রিম বসাও (Firebase থেকে "defaultStream" node)
-    db.ref('defaultStream').on('value', snapshot => {
-      const url = snapshot.val();
-      if (url) {
-        playMatch(url);
-      }
-    });
-
-    // সহায়ক ফাংশন
-    function capitalize(str) {
-      if (!str) return '';
-      return str.charAt(0).toUpperCase() + str.slice(1);
     }
   </script>
 
