@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RS SPORTS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RS SPORTSFy</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-  <!-- 🔥 Firebase SDK -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -90,6 +90,74 @@
       0% { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
+
+    .category-tabs {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      background: #181818;
+      border-bottom: 1px solid #333;
+    }
+
+    .category-tabs button {
+      background: #222;
+      border: 1px solid #00ff66;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .category-tabs button.active {
+      background: #00ff66;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .match-card {
+      border: 1px solid #00ff66;
+      margin: 10px;
+      border-radius: 10px;
+      padding: 12px;
+      background: #1b1b1b;
+      cursor: pointer;
+    }
+
+    .match-meta {
+      font-size: 13px;
+      color: #ccc;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .teams {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .team-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .vs-container {
+      text-align: center;
+    }
+
+    .live-indicator {
+      color: red;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .vs-text {
+      font-size: 16px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -100,7 +168,9 @@
     <div class="icon">🔄 🔍</div>
   </header>
 
-  <div id="loader" class="loader">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
+  <div id="loader" class="loader">
+    Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+  </div>
 
   <video id="hlsPlayer" controls autoplay></video>
 
@@ -108,8 +178,18 @@
     <span>Loading marquee...</span>
   </div>
 
+  <div class="category-tabs">
+    <button class="active" onclick="filterMatches('all')">All</button>
+    <button onclick="filterMatches('cricket')">🏏 Cricket</button>
+    <button onclick="filterMatches('football')">⚽ Football</button>
+  </div>
+
+  <div id="matches">
+    <!-- ম্যাচ কার্ডগুলো এখানে ডাইনামিক আসবে -->
+  </div>
+
   <script>
-    // ✅ তোমার Firebase Config এখানে বসাও
+    // Firebase config বসাও এখানে
     const firebaseConfig = {
       apiKey: "তোমার_API_KEY",
       authDomain: "তোমার_PROJECT_ID.firebaseapp.com",
@@ -125,9 +205,12 @@
 
     const video = document.getElementById('hlsPlayer');
     const loader = document.getElementById('loader');
+    const matchesDiv = document.getElementById('matches');
+    const marqueeSpan = document.querySelector('.marquee span');
 
     let hls;
 
+    // ভিডিও প্লে করার ফাংশন
     function playMatch(url) {
       loader.style.display = 'block';
 
@@ -160,17 +243,79 @@
       }
     }
 
-    // 🔥 লাইভ লিংক Firebase থেকে আনো
-    db.ref("SRKTV").on("value", (snapshot) => {
-      const streamURL = snapshot.val();
-      playMatch(streamURL);
+    // ম্যাচ ফিল্টার করার ফাংশন
+    function filterMatches(category) {
+      const allCards = document.querySelectorAll('.match-card');
+      const buttons = document.querySelectorAll('.category-tabs button');
+
+      buttons.forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`.category-tabs button[onclick="filterMatches('${category}')"]`).classList.add('active');
+
+      allCards.forEach(card => {
+        if (category === 'all' || card.classList.contains(category)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Firebase থেকে ডাইনামিক ম্যাচ কার্ডগুলো নিয়ে আসা
+    db.ref('matches').on('value', snapshot => {
+      const data = snapshot.val();
+      matchesDiv.innerHTML = '';
+
+      if (!data) {
+        matchesDiv.innerHTML = '<p style="text-align:center; padding:20px;">No matches found</p>';
+        return;
+      }
+
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          const match = data[key];
+          const card = document.createElement('div');
+          card.className = 'match-card ' + (match.category || '');
+          card.onclick = () => playMatch(match.streamURL);
+
+          card.innerHTML = `
+            <div class="match-meta">
+              <span>${match.category ? capitalize(match.category) : ''} | ${match.title || ''}</span>
+              <span style="color: ${match.timeColor || 'white'};">${match.time || ''}</span>
+            </div>
+            <div class="teams">
+              <img src="${match.team1Logo}" class="team-logo" alt="Team 1" />
+              <div class="vs-container">
+                <div class="live-indicator">${match.isLive ? '🔴 LIVE' : ''}</div>
+                <div class="vs-text">${match.team1Name} VS ${match.team2Name}</div>
+              </div>
+              <img src="${match.team2Logo}" class="team-logo" alt="Team 2" />
+            </div>
+          `;
+
+          matchesDiv.appendChild(card);
+        }
+      }
     });
 
-    // 🔥 marquee টেক্সট Firebase থেকে আনো
-    db.ref("marquee").on("value", (snapshot) => {
-      const marqueeText = snapshot.val();
-      document.querySelector(".marquee span").innerText = marqueeText;
+    // মারকিকি টেক্সট Firebase থেকে আনো
+    db.ref('marquee').on('value', snapshot => {
+      const text = snapshot.val();
+      marqueeSpan.innerText = text || 'Thanks for downloading RS SPORTS! Enjoy live matches, updates and more.';
     });
+
+    // ডিফল্ট ভিডিও স্ট্রিম বসাও (Firebase থেকে "defaultStream" node)
+    db.ref('defaultStream').on('value', snapshot => {
+      const url = snapshot.val();
+      if (url) {
+        playMatch(url);
+      }
+    });
+
+    // সহায়ক ফাংশন
+    function capitalize(str) {
+      if (!str) return '';
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
   </script>
 
 </body>
