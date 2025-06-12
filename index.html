@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RS SPORTS</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding-bottom: 60px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1a1a1a;
+      padding: 12px 16px;
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .icon {
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .loader {
+      text-align: center;
+      padding: 16px;
+      font-size: 18px;
+      color: #00ff66;
+      font-weight: bold;
+      display: none;
+    }
+
+    .loader .dot {
+      animation: blink 1s infinite;
+    }
+
+    .loader .dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loader .dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes blink {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    video {
+      width: 100%;
+      background: black;
+      margin-top: 5px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 255, 102, 0.4);
+    }
+
+    .marquee {
+      background: #222;
+      padding: 8px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      border-top: 1px solid #00ff66;
+    }
+
+    .marquee span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scroll 10s linear infinite;
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .category-tabs {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      background: #181818;
+      border-bottom: 1px solid #333;
+    }
+
+    .category-tabs button {
+      background: #222;
+      border: 1px solid #00ff66;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .category-tabs button.active {
+      background: #00ff66;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .match-card {
+      border: 1px solid #00ff66;
+      margin: 10px;
+      border-radius: 10px;
+      padding: 12px;
+      background: #1b1b1b;
+      cursor: pointer;
+    }
+
+    .match-meta {
+      font-size: 13px;
+      color: #ccc;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .teams {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .team-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .vs-container {
+      text-align: center;
+    }
+
+    .live-indicator {
+      color: red;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .vs-text {
+      font-size: 16px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="icon">☰</div>
+    <h1>RS SPORTS</h1>
+    <div class="icon">🔄 🔍</div>
+  </header>
+
+  <!-- ✅ Loader -->
+  <div id="loader" class="loader">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
+
+  <!-- ✅ M3U8 Video Player -->
+  <video id="hlsPlayer" controls autoplay></video>
+
+  <!-- ✅ Marquee below video -->
+  <div class="marquee">
+    <span>Thanks for downloading RS SPORTS! Enjoy live matches, updates and more.</span>
+  </div>
+
+  <!-- ✅ Category buttons -->
+  <div class="category-tabs">
+    <button class="active" onclick="filterMatches('all')">All</button>
+    <button onclick="filterMatches('cricket')">🏏 Cricket</button>
+    <button onclick="filterMatches('football')">⚽ Football</button>
+  </div>
+
+  <!-- ✅ Match Cards -->
+  <div id="matches">
+
+    <div class="match-card cricket" onclick="playMatch('https://srknowapp.ncare.live/srktvhlswodrm/srktv.stream/playlist.m3u8')">
+      <div class="match-meta">
+        <span>Cricket | ICC World Test Final</span>
+        <span style="color: red;">Starting in 57:24</span>
+      </div>
+      <div class="teams">
+        <img src="https://flagcdn.com/w40/za.png" class="team-logo">
+        <div class="vs-container">
+          <div class="live-indicator">🔴 LIVE</div>
+          <div class="vs-text">South Africa VS Australia</div>
+        </div>
+        <img src="https://flagcdn.com/w40/au.png" class="team-logo">
+      </div>
+    </div>
+
+    <div class="match-card football" onclick="playMatch('https://srknowapp.ncare.live/srktvhlswodrm/srktv.stream/playlist.m3u8')">
+      <div class="match-meta">
+        <span>Football | UEFA Euro</span>
+        <span style="color: orange;">10:00 pm 11/06/2025</span>
+      </div>
+      <div class="teams">
+        <img src="https://flagcdn.com/w40/it.png" class="team-logo">
+        <div class="vs-container">
+          <div class="live-indicator">🔴 LIVE</div>
+          <div class="vs-text">Italy VS Spain</div>
+        </div>
+        <img src="https://flagcdn.com/w40/es.png" class="team-logo">
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const video = document.getElementById('hlsPlayer');
+    const loader = document.getElementById('loader');
+    let hls;
+
+    function playMatch(url) {
+      loader.style.display = 'block';
+
+      if (hls) {
+        hls.destroy();
+      }
+
+      if (Hls.isSupported()) {
+        hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+          video.play();
+          loader.style.display = 'none';
+        });
+
+        hls.on(Hls.Events.ERROR, function () {
+          loader.innerText = '❌ Failed to load stream';
+        });
+
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url;
+        video.addEventListener('loadedmetadata', function () {
+          video.play();
+          loader.style.display = 'none';
+        });
+      } else {
+        alert("Sorry, your browser doesn't support HLS playback.");
+        loader.style.display = 'none';
+      }
+    }
+
+    function filterMatches(category) {
+      const allCards = document.querySelectorAll('.match-card');
+      const buttons = document.querySelectorAll('.category-tabs button');
+
+      buttons.forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`.category-tabs button[onclick="filterMatches('${category}')"]`).classList.add('active');
+
+      allCards.forEach(card => {
+        if (category === 'all' || card.classList.contains(category)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // ডিফল্ট স্ট্রিম চালু
+    playMatch('https://srknowapp.ncare.live/srktvhlswodrm/srktv.stream/playlist.m3u8');
+  </script>
+
+</body>
+</html>
