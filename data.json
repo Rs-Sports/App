@@ -1,0 +1,30 @@
+{
+  "defaultStream": "https://srknowapp.ncare.live/srktvhlswodrm/srktv.stream/playlist.m3u8",
+  "marquee": "আজকের খেলা: দক্ষিণ আফ্রিকা বনাম অস্ট্রেলিয়া (LIVE)",
+  "matches": {
+    "match1": {
+      "category": "cricket",
+      "title": "ICC World Test Final",
+      "time": "Starting in 57:24",
+      "timeColor": "red",
+      "isLive": true,
+      "team1Logo": "https://flagcdn.com/w40/za.png",
+      "team1Name": "South Africa",
+      "team2Logo": "https://flagcdn.com/w40/au.png",
+      "team2Name": "Australia",
+      "streamURL": "https://srknowapp.ncare.live/srktvhlswodrm/srktv.stream/playlist.m3u8"
+    },
+    "match2": {
+      "category": "football",
+      "title": "UEFA Euro",
+      "time": "10:00 pm 11/06/2025",
+      "timeColor": "orange",
+      "isLive": true,
+      "team1Logo": "https://flagcdn.com/w40/it.png",
+      "team1Name": "Italy",
+      "team2Logo": "https://flagcdn.com/w40/es.png",
+      "team2Name": "Spain",
+      "streamURL": "https://srknowapp.ncare.live/srktvhlswodrm/srktv.stream/playlist.m3u8"
+    }
+  }
+}
