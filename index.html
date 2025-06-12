@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RS SportsFy</title>
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RS SPORTS</title>
+
+  <!-- JW Player CDN -->
+  <script src="https://cdn.jwplayer.com/libraries/your_jwplayer_key.js"></script>
+
   <style>
     body {
       background: #111;
@@ -12,34 +15,6 @@
       font-family: 'Arial', sans-serif;
       margin: 0;
       padding-bottom: 60px;
-    }
-
-    /* Page Loader Spinner */
-    #page-loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-
-    .spinner {
-      border: 5px solid #333;
-      border-top: 5px solid #00ff66;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
     }
 
     header {
@@ -60,43 +35,40 @@
       cursor: pointer;
     }
 
-    .reload-btn svg {
-      vertical-align: middle;
-    }
-
-    .loader {
-      text-align: center;
-      padding: 16px;
-      font-size: 18px;
-      color: #00ff66;
-      font-weight: bold;
-      display: none;
-    }
-
-    .loader .dot {
-      animation: blink 1s infinite;
-    }
-
-    .loader .dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .loader .dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes blink {
-      0% { opacity: 0; }
-      50% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-
-    video {
+    /* JW Player container with relative position for loader */
+    #jwplayer-container {
+      position: relative;
       width: 100%;
-      background: black;
-      margin-top: 5px;
+      max-width: 720px;
+      margin: 5px auto 0;
+      aspect-ratio: 16 / 9;
       border-radius: 12px;
       box-shadow: 0 0 12px rgba(0, 255, 102, 0.4);
+      background: black;
+    }
+
+    /* Loader spinner in center */
+    #loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
+      z-index: 1000;
+    }
+
+    .spinner {
+      border: 4px solid rgba(0, 255, 102, 0.3);
+      border-top: 4px solid #00ff66;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
     }
 
     .marquee {
@@ -105,6 +77,7 @@
       overflow: hidden;
       white-space: nowrap;
       border-top: 1px solid #00ff66;
+      margin-top: 10px;
     }
 
     .marquee span {
@@ -124,6 +97,8 @@
       padding: 10px;
       background: #181818;
       border-bottom: 1px solid #333;
+      max-width: 720px;
+      margin: 0 auto;
     }
 
     .category-tabs button {
@@ -149,6 +124,9 @@
       padding: 12px;
       background: #1b1b1b;
       cursor: pointer;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .match-meta {
@@ -173,6 +151,8 @@
 
     .vs-container {
       text-align: center;
+      flex: 1;
+      padding: 0 10px;
     }
 
     .live-indicator {
@@ -189,16 +169,11 @@
 </head>
 <body>
 
-  <!-- ✅ Page Loading Spinner -->
-  <div id="page-loader">
-    <div class="spinner"></div>
-  </div>
-
   <header>
     <div class="icon">☰</div>
     <h1>RS SPORTS</h1>
-    <div class="icon reload-btn" title="Reload" onclick="location.reload();">
-      <!-- Custom Reload Icon -->
+    <div class="icon reload-btn" title="Reload" onclick="reloadPage()">
+      <!-- রিফ্রেশ আইকন -->
       <svg xmlns="http://www.w3.org/2000/svg" 
            width="24" height="24" viewBox="0 0 24 24" 
            fill="none" stroke="#00ff66" stroke-width="2" 
@@ -209,90 +184,144 @@
     </div>
   </header>
 
-  <!-- ✅ Loader -->
-  <div id="loader" class="loader">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
+  <!-- JW Player container -->
+  <div id="jwplayer-container">
+    <div id="loader">
+      <div class="spinner"></div>
+    </div>
+  </div>
 
-  <!-- ✅ Video Player -->
-  <video id="hlsPlayer" controls autoplay></video>
-
-  <!-- ✅ Marquee -->
   <div class="marquee">
     <span>Thanks for downloading RS SPORTS! Enjoy live matches, updates and more.</span>
   </div>
 
-  <!-- ✅ Category Tabs -->
   <div class="category-tabs">
     <button class="active" onclick="filterMatches('all')">All</button>
     <button onclick="filterMatches('cricket')">🏏 Cricket</button>
     <button onclick="filterMatches('football')">⚽ Football</button>
   </div>
 
-  <!-- ✅ Match Cards -->
   <div id="matches"></div>
 
   <script>
-    fetch('data.json')
-      .then(response => response.json())
-      .then(data => {
-        playMatch(data.defaultStream);
-        document.querySelector('.marquee span').innerText = data.marquee;
-        const matchesDiv = document.getElementById('matches');
-        matchesDiv.innerHTML = '';
-        Object.values(data.matches).forEach(match => {
-          const card = document.createElement('div');
-          card.className = `match-card ${match.category}`;
-          card.onclick = () => playMatch(match.streamURL);
-          card.innerHTML = `
-            <div class="match-meta">
-              <span>${match.category.charAt(0).toUpperCase() + match.category.slice(1)} | ${match.title}</span>
-              <span style="color: ${match.timeColor};">${match.time}</span>
-            </div>
-            <div class="teams">
-              <img src="${match.team1Logo}" class="team-logo" alt="${match.team1Name}">
-              <div class="vs-container">
-                ${match.isLive ? '<div class="live-indicator">🔴 LIVE</div>' : ''}
-                <div class="vs-text">${match.team1Name} VS ${match.team2Name}</div>
-              </div>
-              <img src="${match.team2Logo}" class="team-logo" alt="${match.team2Name}">
-            </div>
-          `;
-          matchesDiv.appendChild(card);
-        });
-      });
-
-    function playMatch(url) {
-      const video = document.getElementById('hlsPlayer');
-      const loader = document.getElementById('loader');
-      loader.style.display = 'block';
-      let hls;
-      if (Hls.isSupported()) {
-        hls = new Hls();
-        hls.loadSource(url);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function () {
-          video.play();
-          loader.style.display = 'none';
-        });
-        hls.on(Hls.Events.ERROR, function () {
-          loader.innerText = '❌ Failed to load stream';
-        });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = url;
-        video.addEventListener('loadedmetadata', function () {
-          video.play();
-          loader.style.display = 'none';
-        });
-      } else {
-        alert("Sorry, your browser doesn't support HLS playback.");
-        loader.style.display = 'none';
-      }
+    // Reload বাটনের জন্য
+    function reloadPage() {
+      location.reload();
     }
 
+    // JW Player সেটআপ ফাংশন
+    function setupJWPlayer(url) {
+      const loader = document.getElementById('loader');
+      loader.style.display = 'block';
+
+      if (window.jwplayerInstance) {
+        window.jwplayerInstance.load([{ file: url }]);
+        window.jwplayerInstance.play();
+      } else {
+        window.jwplayerInstance = jwplayer("jwplayer-container").setup({
+          file: url,
+          width: "100%",
+          aspectratio: "16:9",
+          autostart: true,
+          controls: true
+        });
+      }
+
+      window.jwplayerInstance.on('ready', function() {
+        loader.style.display = 'none';
+      });
+
+      window.jwplayerInstance.on('error', function() {
+        loader.style.display = 'none';
+        alert('❌ Failed to load stream');
+      });
+
+      window.jwplayerInstance.on('buffer', function() {
+        loader.style.display = 'block';
+      });
+
+      window.jwplayerInstance.on('play', function() {
+        loader.style.display = 'none';
+      });
+    }
+
+    // ডেমো ডেটা (তোমার data.json থেকে লোড করবে)
+    const demoData = {
+      defaultStream: "https://server.thelegitpro.in/rongeentv/rongeentv/tracks-v1a1/mono.m3u8",
+      marquee: "Thanks for downloading RS SPORTS! Enjoy live matches, updates and more.",
+      matches: {
+        1: {
+          category: "cricket",
+          title: "Bangladesh vs India",
+          time: "Live Now",
+          timeColor: "red",
+          team1Name: "Bangladesh",
+          team1Logo: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f9/Bangladesh_national_cricket_team_logo.svg/120px-Bangladesh_national_cricket_team_logo.svg.png",
+          team2Name: "India",
+          team2Logo: "https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg",
+          isLive: true,
+          streamURL: "https://server.thelegitpro.in/rongeentv/rongeentv/tracks-v1a1/mono.m3u8"
+        },
+        2: {
+          category: "football",
+          title: "Manchester United vs Chelsea",
+          time: "Tomorrow 8:00 PM",
+          timeColor: "#00ff66",
+          team1Name: "Manchester Utd",
+          team1Logo: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7a/Manchester_United_FC_crest.svg/120px-Manchester_United_FC_crest.svg.png",
+          team2Name: "Chelsea",
+          team2Logo: "https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg",
+          isLive: false,
+          streamURL: "https://path.to/football/stream.m3u8"
+        }
+      }
+    };
+
+    // শুরুতে ডিফল্ট ভিডিও চালাও
+    setupJWPlayer(demoData.defaultStream);
+
+    // ম্যার্কি আপডেট
+    document.querySelector('.marquee span').innerText = demoData.marquee;
+
+    // ম্যাচ কার্ড তৈরি
+    function renderMatches(data) {
+      const matchesDiv = document.getElementById('matches');
+      matchesDiv.innerHTML = '';
+
+      Object.values(data.matches).forEach(match => {
+        const card = document.createElement('div');
+        card.className = `match-card ${match.category}`;
+        card.onclick = () => setupJWPlayer(match.streamURL);
+
+        card.innerHTML = `
+          <div class="match-meta">
+            <span>${match.category.charAt(0).toUpperCase() + match.category.slice(1)} | ${match.title}</span>
+            <span style="color: ${match.timeColor};">${match.time}</span>
+          </div>
+          <div class="teams">
+            <img src="${match.team1Logo}" class="team-logo" alt="${match.team1Name}">
+            <div class="vs-container">
+              ${match.isLive ? '<div class="live-indicator">🔴 LIVE</div>' : ''}
+              <div class="vs-text">${match.team1Name} VS ${match.team2Name}</div>
+            </div>
+            <img src="${match.team2Logo}" class="team-logo" alt="${match.team2Name}">
+          </div>
+        `;
+
+        matchesDiv.appendChild(card);
+      });
+    }
+
+    renderMatches(demoData);
+
+    // ফিল্টার ফাংশন
     function filterMatches(category) {
       const allCards = document.querySelectorAll('.match-card');
       const buttons = document.querySelectorAll('.category-tabs button');
+
       buttons.forEach(btn => btn.classList.remove('active'));
       document.querySelector(`.category-tabs button[onclick="filterMatches('${category}')"]`).classList.add('active');
+
       allCards.forEach(card => {
         if (category === 'all' || card.classList.contains(category)) {
           card.style.display = 'block';
@@ -301,15 +330,6 @@
         }
       });
     }
-
-    // ✅ Hide page loader after 3 seconds
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        const loader = document.getElementById('page-loader');
-        if (loader) loader.style.display = 'none';
-      }, 3000);
-    });
   </script>
-
 </body>
 </html>
