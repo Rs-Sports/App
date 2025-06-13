@@ -25,6 +25,30 @@
       "team2Logo": "https://flagcdn.com/w40/es.png",
       "team2Name": "Spain",
       "streamURL": "https://server.thelegitpro.in/rongeentv/rongeentv/tracks-v1a1/mono.m3u8"
+    },
+    "match3": {
+      "category": "cricket",
+      "title": "Asia Cup Final",
+      "time": "Tomorrow 4:00 PM",
+      "timeColor": "green",
+      "isLive": false,
+      "team1Logo": "https://flagcdn.com/w40/in.png",
+      "team1Name": "India",
+      "team2Logo": "https://flagcdn.com/w40/pk.png",
+      "team2Name": "Pakistan",
+      "streamURL": "https://example.com/asia-cup-final.m3u8"
+    },
+    "match4": {
+      "category": "football",
+      "title": "Copa America Semi Final",
+      "time": "9:00 PM 14/06/2025",
+      "timeColor": "blue",
+      "isLive": false,
+      "team1Logo": "https://flagcdn.com/w40/ar.png",
+      "team1Name": "Argentina",
+      "team2Logo": "https://flagcdn.com/w40/br.png",
+      "team2Name": "Brazil",
+      "streamURL": "https://example.com/copa-america.m3u8"
     }
   }
 }
