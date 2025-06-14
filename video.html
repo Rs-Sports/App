@@ -173,27 +173,15 @@
       { src: 'https://pixeldrain.com/api/file/15', poster: 'https://i.imgur.com/15.jpg' }
     ];
 
-    let clickOnce = false;
     let currentIndex = 0;
 
     function playVideo(src, poster) {
       const video = document.getElementById("mainVideo");
       const source = document.getElementById("videoSource");
-      if (!clickOnce) {
-        clickOnce = true;
-        window.open("https://www.profitableratecpm.com/qpbsfqs6w0?key=ea8c197a2f7be4c233faa954d8a37358", "_blank");
-        setTimeout(() => {
-          source.src = src;
-          video.poster = poster;
-          video.load();
-          video.play();
-        }, 500);
-      } else {
-        source.src = src;
-        video.poster = poster;
-        video.load();
-        video.play();
-      }
+      source.src = src;
+      video.poster = poster;
+      video.load();
+      video.play();
     }
 
     function loadPlaylistItems(count = 4) {
