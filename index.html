@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>RS SportsFy</title>
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  
+  <!-- Video.js CSS -->
+  <link href="https://vjs.zencdn.net/8.20.0/video-js.css" rel="stylesheet" />
+
   <style>
     body {
       background: #111;
@@ -15,10 +18,8 @@
     }
     #page-loader {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: #000;
       display: flex;
       align-items: center;
@@ -29,8 +30,7 @@
       border: 5px solid #333;
       border-top: 5px solid #00ff66;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
+      width: 50px; height: 50px;
       animation: spin 1s linear infinite;
     }
     @keyframes spin {
@@ -73,16 +73,16 @@
       animation-delay: 0.4s;
     }
     @keyframes blink {
-      0% { opacity: 0; }
+      0%, 100% { opacity: 0; }
       50% { opacity: 1; }
-      100% { opacity: 0; }
     }
-    video {
-      width: 100%;
-      background: black;
-      margin-top: 5px;
+    /* Video.js player style */
+    .video-js {
+      width: 100% !important;
       border-radius: 12px;
       box-shadow: 0 0 12px rgba(0, 255, 102, 0.4);
+      margin-top: 5px;
+      background: black;
     }
     .marquee {
       background: #222;
@@ -128,6 +128,10 @@
       padding: 12px;
       background: #1b1b1b;
       cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .match-card:hover {
+      background-color: #004d00;
     }
     .match-meta {
       font-size: 13px;
@@ -148,20 +152,23 @@
     }
     .vs-container {
       text-align: center;
+      flex-grow: 1;
+      margin: 0 10px;
     }
     .live-indicator {
       color: red;
       font-weight: bold;
       margin-bottom: 4px;
+      animation: blink 1.5s infinite;
     }
     .vs-text {
       font-size: 16px;
       font-weight: bold;
+      color: #00ff66;
     }
     .bottom-buttons {
       position: fixed;
-      bottom: 0;
-      left: 0;
+      bottom: 0; left: 0;
       width: 100%;
       display: flex;
       justify-content: space-around;
@@ -180,6 +187,7 @@
       cursor: pointer;
       display: flex;
       align-items: center;
+      user-select: none;
     }
     .live-indicator-badge {
       background: #ff0000;
@@ -190,7 +198,6 @@
       border-radius: 12px;
       margin-right: 0;
       box-shadow: 0 0 8px #ff0000;
-      user-select: none;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -211,7 +218,7 @@
       animation-delay: 0.6s;
     }
     .football-icon {
-      /* bounce animation removed */
+      /* No bounce animation as requested */
     }
   </style>
 </head>
@@ -232,7 +239,16 @@
   </header>
 
   <div id="loader" class="loader">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
-  <video id="hlsPlayer" controls autoplay></video>
+
+  <!-- Video.js player tag -->
+  <video
+    id="hlsPlayer"
+    class="video-js vjs-default-skin"
+    controls
+    autoplay
+    preload="auto"
+    playsinline
+  ></video>
 
   <div class="marquee">
     <span>আজকের খেলা: বাংলাদেশ বনাম ভারত (LIVE)</span>
@@ -242,26 +258,30 @@
     <button class="active" onclick="filterMatches('all')">All</button>
     <button onclick="filterMatches('cricket')">🏏 Cricket</button>
     <button onclick="filterMatches('football')">⚽ Football</button>
+    <button onclick="filterMatches('upcoming')">🕒 Upcoming</button>
   </div>
 
   <div id="matches"></div>
 
   <div class="bottom-buttons">
-    <button>⚽</button>
+    <button class="football-icon" title="Football">&#x26BD;</button>
 
-    <button onclick="event.preventDefault();">
+    <button onclick="toggleMatchList()">
       <span class="live-indicator-badge">
         <span class="animated-dot"></span>
         LIVE
       </span>
     </button>
-    
+
     <button onclick="window.open('video.html', '_blank')">🎬</button>
   </div>
 
+  <!-- Video.js script -->
+  <script src="https://vjs.zencdn.net/8.20.0/video.min.js"></script>
+
   <script>
     const data = {
-      defaultStream: "https://live.incableinternet.com/v/QCZ86p6-0oo_0.m3u8",
+      defaultStream: "https://live20.bozztv.com/akamaissh101/ssh101/ashtv/playlist.m3u8",
       marquee: "আজকের খেলা: বাংলাদেশ বনাম ভারত (LIVE)",
       matches: {
         match1: {
@@ -273,7 +293,7 @@
           team1Name: "বাংলাদেশ",
           team2Logo: "https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg",
           team2Name: "ভারত",
-          streamURL: "http://163.172.57.3/crc5/tracks-v1a1/mono.m3u8",
+          streamURL: "https://smart.bengaldigital.live/sun-bangla-paid/tracks-v1a1/mono.ts.m3u8",
           isLive: true
         },
         match2: {
@@ -285,77 +305,121 @@
           team1Name: "আর্জেন্টিনা",
           team2Logo: "https://upload.wikimedia.org/wikipedia/en/0/05/Flag_of_Brazil.svg",
           team2Name: "ব্রাজিল",
-          streamURL: "http://163.172.57.3/crc5/tracks-v1a1/mono.m3u8",
+          streamURL: "https://tv.bdixtv24.com/toffee/live.php?id=b6192dbff21b&e=.m3u8",
+          isLive: false
+        },
+        match2: {
+          category: "football",
+          title: "আর্জেন্টিনা বনাম ব্রাজিল",
+          time: "রাত ৯:৩০",
+          timeColor: "#00ff66",
+          team1Logo: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Flag_of_Argentina.svg",
+          team1Name: "আর্জেন্টিনা",
+          team2Logo: "https://upload.wikimedia.org/wikipedia/en/0/05/Flag_of_Brazil.svg",
+          team2Name: "ব্রাজিল",
+          streamURL: "https://tv.bdixtv24.com/toffee/live.php?id=b6192dbff21b&e=.m3u8",
+          isLive: false
+        },
+        // নতুন ম্যাচ (Upcoming ক্যাটাগরির জন্য)
+        match3: {
+          category: "upcoming",
+          title: "জার্মানি বনাম ফ্রান্স",
+          time: "আগামীকাল সন্ধ্যা ৮:০০",
+          timeColor: "#ffaa00",
+          team1Logo: "https://flagcdn.com/de.svg",
+          team1Name: "জার্মানি",
+          team2Logo: "https://flagcdn.com/fr.svg",
+          team2Name: "ফ্রান্স",
+          streamURL: "",
           isLive: false
         }
       }
     };
 
-    playMatch(data.defaultStream);
-    document.querySelector('.marquee span').innerText = data.marquee;
-    const matchesDiv = document.getElementById('matches');
-    matchesDiv.innerHTML = '';
-    Object.values(data.matches).forEach(match => {
-      const card = document.createElement('div');
-      card.className = `match-card ${match.category}`;
-      card.onclick = () => playMatch(match.streamURL);
-      card.innerHTML = `
-        <div class="match-meta">
-          <span>${match.category.charAt(0).toUpperCase() + match.category.slice(1)} | ${match.title}</span>
-          <span style="color: ${match.timeColor};">${match.time}</span>
-        </div>
-        <div class="teams">
-          <img src="${match.team1Logo}" class="team-logo" alt="${match.team1Name}">
-          <div class="vs-container">
-            ${match.isLive ? '<div class="live-indicator">🔴 LIVE</div>' : ''}
-            <div class="vs-text">${match.team1Name} VS ${match.team2Name}</div>
-          </div>
-          <img src="${match.team2Logo}" class="team-logo" alt="${match.team2Name}">
-        </div>
-      `;
-      matchesDiv.appendChild(card);
+    // Initialize video.js player
+    var player = videojs('hlsPlayer', {
+      fluid: true,
+      autoplay: true,
+      controls: true,
+      preload: 'auto',
+      liveui: true
     });
 
+    // Function to play stream URL
     function playMatch(url) {
-      const video = document.getElementById('hlsPlayer');
+      if (!url) {
+        alert('এই ম্যাচের জন্য স্ট্রিম লিংক উপলব্ধ নেই।');
+        return;
+      }
       const loader = document.getElementById('loader');
       loader.style.display = 'block';
-      let hls;
-      if (Hls.isSupported()) {
-        hls = new Hls();
-        hls.loadSource(url);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function () {
-          video.play();
+
+      player.src({
+        src: url,
+        type: 'application/x-mpegURL'
+      });
+      player.ready(function () {
+        player.play().then(() => {
           loader.style.display = 'none';
+        }).catch(() => {
+          loader.innerText = '▶Loading...';
         });
-        hls.on(Hls.Events.ERROR, function () {
-          loader.innerText = '❌ Failed to load stream';
-        });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = url;
-        video.addEventListener('loadedmetadata', function () {
-          video.play();
-          loader.style.display = 'none';
-        });
-      } else {
-        alert("Sorry, your browser doesn't support HLS playback.");
-        loader.style.display = 'none';
-      }
+      });
+    }
+
+    // প্রথমে ডিফল্ট স্ট্রিম চালাও
+    playMatch(data.defaultStream);
+
+    // মারকুই টেক্সট সেট করো
+    document.querySelector('.marquee span').innerText = data.marquee;
+
+    const matchesDiv = document.getElementById('matches');
+    function renderMatches(filter = 'all') {
+      matchesDiv.innerHTML = '';
+      Object.values(data.matches).forEach(match => {
+        if (filter === 'all' || match.category === filter) {
+          const card = document.createElement('div');
+          card.className = `match-card ${match.category}`;
+          card.onclick = () => playMatch(match.streamURL);
+          card.innerHTML = `
+            <div class="match-meta">
+              <span>${capitalize(match.category)} | ${match.title}</span>
+              <span style="color: ${match.timeColor};">${match.time}</span>
+            </div>
+            <div class="teams">
+              <img src="${match.team1Logo}" class="team-logo" alt="${match.team1Name}">
+              <div class="vs-container">
+                ${match.isLive ? '<div class="live-indicator">🔴 LIVE</div>' : ''}
+                <div class="vs-text">${match.team1Name} VS ${match.team2Name}</div>
+              </div>
+              <img src="${match.team2Logo}" class="team-logo" alt="${match.team2Name}">
+            </div>
+          `;
+          matchesDiv.appendChild(card);
+        }
+      });
+    }
+    renderMatches();
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
     function filterMatches(category) {
-      const allCards = document.querySelectorAll('.match-card');
-      const buttons = document.querySelectorAll('.category-tabs button');
-      buttons.forEach(btn => btn.classList.remove('active'));
-      document.querySelector(`.category-tabs button[onclick="filterMatches('${category}')"]`).classList.add('active');
-      allCards.forEach(card => {
-        if (category === 'all' || card.classList.contains(category)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
+      renderMatches(category);
+      // বাটনের active ক্লাস নিয়ন্ত্রণ
+      document.querySelectorAll('.category-tabs button').forEach(btn => {
+        btn.classList.remove('active');
       });
+      document.querySelector(`.category-tabs button[onclick="filterMatches('${category}')"]`).classList.add('active');
+    }
+
+    function toggleMatchList() {
+      if (matchesDiv.style.display === 'none' || matchesDiv.style.display === '') {
+        matchesDiv.style.display = 'block';
+      } else {
+        matchesDiv.style.display = 'none';
+      }
     }
 
     window.addEventListener('load', () => {
