@@ -67,8 +67,8 @@
       margin: 10px auto 30px;
       text-align: center;
       display: flex;
-      justify-content: center;
-      gap: 15px;
+      justify-content: space-between;
+      gap: 12px;
       flex-wrap: nowrap;
     }
 
@@ -77,14 +77,16 @@
       border: none;
       color: black;
       font-weight: bold;
-      padding: 10px 25px;
+      padding: 8px 16px;
       border-radius: 25px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       box-shadow: 0 0 15px limegreen;
       transition: background-color 0.3s, color 0.3s;
       white-space: nowrap;
       flex-shrink: 0;
+      flex-grow: 1;
+      text-align: center;
     }
 
     .category-buttons button.active,
@@ -133,11 +135,11 @@
       background-color: #32cd32;
     }
 
-    .telegram-icon {
+    .back-button {
       position: fixed;
-      bottom: 60px;
       right: 20px;
-      background: #229ED9;
+      bottom: 20px;
+      background: #ff4444;
       color: white;
       padding: 12px;
       border-radius: 50%;
@@ -145,11 +147,14 @@
       text-align: center;
       z-index: 999;
       text-decoration: none;
-      transform: rotate(-20deg);
+      user-select: none;
+      box-shadow: 0 0 10px #ff4444;
+      transition: background-color 0.3s;
     }
 
-    .telegram-icon svg {
-      display: block;
+    .back-button:hover {
+      background-color: #ff0000;
+      box-shadow: 0 0 15px #ff0000;
     }
 
     footer {
@@ -186,11 +191,7 @@
 
   <button class="load-more" onclick="loadMore()">Load More</button>
 
-  <a class="telegram-icon" href="https://t.me/rsmovieshop" title="Join Telegram">
-    <svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
-    </svg>
-  </a>
+  <a class="back-button" href="javascript:window.history.back();" title="Go Back">🏠</a>
 
   <footer>
     © 2025 RS Movie Shop | All rights reserved.
