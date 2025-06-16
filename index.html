@@ -306,21 +306,45 @@
     </div>
   </header>
 
-  <!-- Sidebar menu -->
-  <nav id="sidebar">
-    <ul>
-      <li onclick="filterMatches('all'); closeSidebar();">সব ম্যাচ</li>
-      <li onclick="filterMatches('cricket'); closeSidebar();">🏏 ক্রিকেট</li>
-      <li onclick="filterMatches('football'); closeSidebar();">⚽ ফুটবল</li>
-      <li onclick="filterMatches('upcoming'); closeSidebar();">🕒 আসন্ন</li>
-      <li onclick="alert('সেটিংস ফিচার শীঘ্রই আসবে!'); closeSidebar();">সেটিংস</li>
-      <li onclick="alert('যোগাযোগ করুন: support@rssports.com'); closeSidebar();">যোগাযোগ</li>
-    </ul>
-  </nav>
+<!-- Sidebar menu -->
+<nav id="sidebar">
+  <!-- Image/Logo at Top -->
+  <div style="text-align: center; padding: 15px;">
+    <img src="https://imgur.com/CQ6wIoM.png" alt="RS Sports Logo" style="max-width: 100px; border-radius: 50%;" />
+  </div>
 
-  <!-- Overlay -->
-  <div id="overlay"></div>
+  <ul>
+    <li onclick="alert('Contact us: info.rssportsfy@gmail.com'); closeSidebar();">☎️ Contact</li>
+    <li onclick="alert('About RS Sports: We are a free live sports streaming platform.'); closeSidebar();">ℹ️ About</li>
+    <li onclick="window.open('https://t.me/rs_sports_live', '_blank'); closeSidebar();">📢 Join Telegram</li>
+    <li onclick="window.open('https://www.facebook.com/profile.php?id=61557053916041', '_blank'); closeSidebar();">📘 Facebook Page</li>
+    <li onclick="alert('We respect your privacy. We do not collect any personal data.'); closeSidebar();">🔒 Privacy Policy</li>
+    <li onclick="shareSite(); closeSidebar();">🔗 Share This App</li>
+  </ul>
 
+  <!-- Copyright section -->
+  <div style="text-align: center; padding: 10px; font-size: 13px; color: #aaa; border-top: 1px solid #444;">
+    © 2025 RS SportsFy. All rights reserved.
+  </div>
+</nav>
+
+<!-- Overlay -->
+<div id="overlay"></div>
+
+<!-- Share Function -->
+<script>
+  function shareSite() {
+    if (navigator.share) {
+      navigator.share({
+        title: 'RS SportsFy',
+        text: 'Watch free live sports streaming!',
+        url: window.location.href
+      });
+    } else {
+      alert('Your browser does not support the share feature.');
+    }
+  }
+</script>
   <div id="loader" class="loader">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
 
   <!-- Video.js player tag -->
