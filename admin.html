@@ -1,97 +1,51 @@
-<!-- admin.html with password protection --><!DOCTYPE html><html lang="en">
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Admin Panel - RS Movie</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RS Movie Admin Panel</title>
   <style>
-    body {
-      background-color: #111;
-      color: #0f0;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-    }
-    .form-container {
-      max-width: 600px;
-      margin: auto;
-      background-color: #000;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px limegreen;
-    }
-    input, select, button {
-      display: block;
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      background-color: limegreen;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    #adminPanel {
-      display: none;
-    }
-    #loginSection {
-      max-width: 400px;
-      margin: 100px auto;
-      text-align: center;
-      background-color: #000;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px red;
-    }
+    body { background: black; color: white; font-family: Arial; padding: 20px; }
+    input, select, button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
+    .hidden { display: none; }
   </style>
 </head>
-<body>  <div id="loginSection">
-    <h2>Admin Login</h2>
-    <input type="password" id="passwordInput" placeholder="Enter password">
+<body>
+  <h2>Admin Panel</h2>
+  <div id="login">
+    <input type="password" id="adminPass" placeholder="Enter password" />
     <button onclick="checkPassword()">Login</button>
-  </div>  <div id="adminPanel">
-    <h1>RS Movie Admin Panel</h1>
-    <div class="form-container">
-      <label>Video Link</label>
-      <input type="text" id="videoLink" placeholder="Enter video URL"><label>Poster Image</label>
-  <input type="text" id="posterImage" placeholder="Enter image URL">
+  </div>
 
-  <label>Category</label>
-  <select id="category">
-    <option value="natok">Natok</option>
-    <option value="movie">Movie</option>
-  </select>
+  <div id="adminForm" class="hidden">
+    <select id="type"><option>MOVIE</option><option>NATOK</option></select>
+    <input type="text" id="videoUrl" placeholder="Video URL" />
+    <input type="text" id="posterUrl" placeholder="Poster URL" />
+    <button onclick="addEntry()">Add Video</button>
+    <p>Note: This version does not write to Google Sheets. Manual update needed.</p>
+  </div>
 
-  <button onclick="saveVideo()">Add to Playlist</button>
-</div>
-
-  </div>  <script>
+  <script>
     function checkPassword() {
-      const input = document.getElementById("passwordInput").value;
-      const correctPassword = "Admin/766467"; // Change to your own secure password
-
-      if (input === correctPassword) {
-        document.getElementById("loginSection").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
+      const pass = document.getElementById('adminPass').value;
+      if (pass === "rsmovie2025") {
+        document.getElementById('login').classList.add('hidden');
+        document.getElementById('adminForm').classList.remove('hidden');
       } else {
-        alert("Incorrect password!");
+        alert("Wrong password!");
       }
     }
 
-    function saveVideo() {
-      const video = document.getElementById("videoLink").value;
-      const poster = document.getElementById("posterImage").value;
-      const category = document.getElementById("category").value;
-
-      if (video && poster) {
-        alert("Video saved! (এইটা এখন লোকাল এলার্ট, রিয়েল সেভ করতে ব্যাকএন্ড লাগবে)");
-      } else {
-        alert("Please fill in all fields.");
-      }
+    function addEntry() {
+      const type = document.getElementById('type').value;
+      const video = document.getElementById('videoUrl').value;
+      const poster = document.getElementById('posterUrl').value;
+      alert(`Save this manually to Google Sheet:
+Type: ${type}
+Video: ${video}
+Poster: ${poster}`);
     }
-  </script></body>
+  </script>
+</body>
 </html>
