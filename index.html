@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>RS SportsFy</title>
-  
+
   <!-- Video.js CSS -->
   <link href="https://vjs.zencdn.net/8.20.0/video-js.css" rel="stylesheet" />
 
@@ -15,7 +15,9 @@
       font-family: 'Arial', sans-serif;
       margin: 0;
       padding-bottom: 100px;
+      overflow-x: hidden;
     }
+    /* Loader spinner */
     #page-loader {
       position: fixed;
       top: 0; left: 0;
@@ -37,25 +39,83 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: #1a1a1a;
       padding: 12px 16px;
+      position: relative;
+      z-index: 1001;
     }
     header h1 {
       font-size: 20px;
       margin: 0;
     }
     .icon {
-      font-size: 18px;
+      font-size: 24px;
       cursor: pointer;
+      user-select: none;
+      color: #00ff66;
     }
     .reload-btn svg {
       vertical-align: middle;
+      stroke: #00ff66;
+      cursor: pointer;
     }
-    .loader {
+
+    /* Sidebar styles */
+    #sidebar {
+      position: fixed;
+      top: 0; left: -250px;
+      width: 250px;
+      height: 100vh;
+      background: #111;
+      border-right: 2px solid #00ff66;
+      padding-top: 60px;
+      box-sizing: border-box;
+      transition: left 0.3s ease;
+      z-index: 1100;
+      overflow-y: auto;
+    }
+    #sidebar.active {
+      left: 0;
+    }
+    #sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #sidebar ul li {
+      padding: 12px 20px;
+      border-bottom: 1px solid #222;
+      cursor: pointer;
+      color: #00ff66;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+    #sidebar ul li:hover {
+      background-color: #004d00;
+    }
+
+    /* Overlay when sidebar is open */
+    #overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.6);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      z-index: 1050;
+    }
+    #overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #loader {
       text-align: center;
       padding: 16px;
       font-size: 18px;
@@ -76,6 +136,7 @@
       0%, 100% { opacity: 0; }
       50% { opacity: 1; }
     }
+
     /* Video.js player style */
     .video-js {
       width: 100% !important;
@@ -84,6 +145,7 @@
       margin-top: 5px;
       background: black;
     }
+
     .marquee {
       background: #222;
       padding: 8px 0;
@@ -100,6 +162,7 @@
       0% { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
+
     .category-tabs {
       display: flex;
       justify-content: space-around;
@@ -115,12 +178,15 @@
       border-radius: 12px;
       font-size: 14px;
       cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
     }
     .category-tabs button.active {
       background: #00ff66;
       color: #000;
       font-weight: bold;
     }
+
     .match-card {
       border: 1px solid #00ff66;
       margin: 10px;
@@ -149,6 +215,7 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
+      object-fit: cover;
     }
     .vs-container {
       text-align: center;
@@ -166,6 +233,7 @@
       font-weight: bold;
       color: #00ff66;
     }
+
     .bottom-buttons {
       position: fixed;
       bottom: 0; left: 0;
@@ -218,7 +286,7 @@
       animation-delay: 0.6s;
     }
     .football-icon {
-      /* No bounce animation as requested */
+      /* No bounce animation */
     }
   </style>
 </head>
@@ -228,15 +296,30 @@
   </div>
 
   <header>
-    <div class="icon">☰</div>
+    <div class="icon" id="menu-toggle" title="মেনু খুলুন">&#9776;</div>
     <h1>RS SportsFy</h1>
-    <div class="icon reload-btn" title="Reload" onclick="location.reload();">
+    <div class="icon reload-btn" title="পুনরায় লোড করুন" onclick="location.reload();">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00ff66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="23 4 23 10 17 10"></polyline>
         <path d="M20.49 15A9 9 0 1 1 12 3a9 9 0 0 1 8.49 6"></path>
       </svg>
     </div>
   </header>
+
+  <!-- Sidebar menu -->
+  <nav id="sidebar">
+    <ul>
+      <li onclick="filterMatches('all'); closeSidebar();">সব ম্যাচ</li>
+      <li onclick="filterMatches('cricket'); closeSidebar();">🏏 ক্রিকেট</li>
+      <li onclick="filterMatches('football'); closeSidebar();">⚽ ফুটবল</li>
+      <li onclick="filterMatches('upcoming'); closeSidebar();">🕒 আসন্ন</li>
+      <li onclick="alert('সেটিংস ফিচার শীঘ্রই আসবে!'); closeSidebar();">সেটিংস</li>
+      <li onclick="alert('যোগাযোগ করুন: support@rssports.com'); closeSidebar();">যোগাযোগ</li>
+    </ul>
+  </nav>
+
+  <!-- Overlay -->
+  <div id="overlay"></div>
 
   <div id="loader" class="loader">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
 
@@ -280,6 +363,26 @@
   <script src="https://vjs.zencdn.net/8.20.0/video.min.js"></script>
 
   <script>
+    // Sidebar toggle
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const menuToggle = document.getElementById('menu-toggle');
+
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.add('active');
+      overlay.classList.add('active');
+    });
+
+    overlay.addEventListener('click', () => {
+      closeSidebar();
+    });
+
+    function closeSidebar() {
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+    }
+
+    // Sample data
     const data = {
       defaultStream: "https://live20.bozztv.com/akamaissh101/ssh101/ashtv/playlist.m3u8",
       marquee: "আজকের খেলা: বাংলাদেশ বনাম ভারত (LIVE)",
@@ -308,19 +411,6 @@
           streamURL: "https://tv.bdixtv24.com/toffee/live.php?id=b6192dbff21b&e=.m3u8",
           isLive: false
         },
-        match2: {
-          category: "football",
-          title: "আর্জেন্টিনা বনাম ব্রাজিল",
-          time: "রাত ৯:৩০",
-          timeColor: "#00ff66",
-          team1Logo: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Flag_of_Argentina.svg",
-          team1Name: "আর্জেন্টিনা",
-          team2Logo: "https://upload.wikimedia.org/wikipedia/en/0/05/Flag_of_Brazil.svg",
-          team2Name: "ব্রাজিল",
-          streamURL: "https://tv.bdixtv24.com/toffee/live.php?id=b6192dbff21b&e=.m3u8",
-          isLive: false
-        },
-        // নতুন ম্যাচ (Upcoming ক্যাটাগরির জন্য)
         match3: {
           category: "upcoming",
           title: "জার্মানি বনাম ফ্রান্স",
@@ -345,7 +435,6 @@
       liveui: true
     });
 
-    // Function to play stream URL
     function playMatch(url) {
       if (!url) {
         alert('এই ম্যাচের জন্য স্ট্রিম লিংক উপলব্ধ নেই।');
@@ -367,7 +456,7 @@
       });
     }
 
-    // প্রথমে ডিফল্ট স্ট্রিম চালাও
+    // শুরুতে ডিফল্ট স্ট্রিম প্লে করো
     playMatch(data.defaultStream);
 
     // মারকুই টেক্সট সেট করো
@@ -407,27 +496,27 @@
 
     function filterMatches(category) {
       renderMatches(category);
-      // বাটনের active ক্লাস নিয়ন্ত্রণ
-      document.querySelectorAll('.category-tabs button').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      document.querySelector(`.category-tabs button[onclick="filterMatches('${category}')"]`).classList.add('active');
+      document.querySelectorAll('.category-tabs button').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.category-tabs button')).find(b => b.textContent.toLowerCase().includes(category === 'all' ? 'all' : category));
+      if (activeBtn) activeBtn.classList.add('active');
     }
 
+    // Bottom LIVE বাটন দিয়ে সব ম্যাচ দেখানোর টগল
     function toggleMatchList() {
-      if (matchesDiv.style.display === 'none' || matchesDiv.style.display === '') {
-        matchesDiv.style.display = 'block';
+      // এখানে তুমি চাইলে সাইডবার খুলে দিতে পারো বা অন্য কোনো UI পরিবর্তন করতে পারো
+      if (sidebar.classList.contains('active')) {
+        closeSidebar();
       } else {
-        matchesDiv.style.display = 'none';
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+        filterMatches('all');
       }
     }
 
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        const loader = document.getElementById('page-loader');
-        if (loader) loader.style.display = 'none';
-      }, 3000);
-    });
+    // পেজ লোডার হাইড করো পেজ লোড শেষ হলে
+    window.onload = function() {
+      document.getElementById('page-loader').style.display = 'none';
+    };
   </script>
 </body>
 </html>
