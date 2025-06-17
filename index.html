@@ -216,22 +216,21 @@
   </style>
 </head>
 <body>  <header>
-    <!-- Sidebar Menu -->
-  <div id="sideMenu">
-    <h3>📋 মেনু</h3>
+    <div class="icon" id="menu-toggle">☰</div>
+    <h1>RS SportsFy</h1>
+    <div class="icon reload-btn" onclick="location.reload();">⟳</div>
+  </header>  <nav id="sidebar">
     <ul>
-      <li><a href="#">📞 Contact</a></li>
-      <li><a href="#">ℹ️ About</a></li>
-      <li><a href="#">📢 Join Telegram</a></li>
-      <li><a href="#">📘 Facebook</a></li>
-      <li><a href="#">🔒 Privacy Policy</a></li>
-      <li><a href="#" onclick="sharePage()">🔗 Share</a></li>
+      <li onclick="alert('Contact us: info.rssportsfy@gmail.com'); closeSidebar();">☎️ Contact</li>
+      <li onclick="alert('We are a free live sports streaming platform.'); closeSidebar();">ℹ️ About</li>
+      <li onclick="window.open('https://t.me/rs_sports_live', '_blank'); closeSidebar();">📢 Join Telegram</li>
+      <li onclick="window.open('https://www.facebook.com/profile.php?id=61557053916041', '_blank'); closeSidebar();">📘 Facebook Page</li>
+      <li onclick="alert('We respect your privacy.'); closeSidebar();">🔒 Privacy Policy</li>
+      <li onclick="navigator.share ? navigator.share({ title: 'RS SportsFy', text: 'Watch live!', url: location.href }) : alert('Not supported'); closeSidebar();">🔗 Share</li>
     </ul>
-    <div class="menu-footer">© <span id="menuYear"></span> RS SportsFy</div>
-  </div>
+  </nav>
+  <div id="overlay"></div><video id="hlsPlayer" class="video-js vjs-default-skin" controls autoplay preload="auto" playsinline
 
-<!-- Overlay -->
-<div id="overlay"></div>
 > </video>
 
   <div class="marquee">
