@@ -216,27 +216,19 @@
   </style>
 </head>
 <body>  <header>
-    <!-- Sidebar menu -->
-<nav id="sidebar">
-  <!-- Image/Logo at Top -->
-  <div style="text-align: center; padding: 15px;">
-    <img src="https://i.postimg.cc/pWmNjRdg/db45bf4b-5ae7-4797-8155-41664b766105.png" alt="RS Sports Logo" style="max-width: 100px; border-radius: 50%;" />
+    <!-- Sidebar Menu -->
+  <div id="sideMenu">
+    <h3>📋 মেনু</h3>
+    <ul>
+      <li><a href="#">📞 Contact</a></li>
+      <li><a href="#">ℹ️ About</a></li>
+      <li><a href="#">📢 Join Telegram</a></li>
+      <li><a href="#">📘 Facebook</a></li>
+      <li><a href="#">🔒 Privacy Policy</a></li>
+      <li><a href="#" onclick="sharePage()">🔗 Share</a></li>
+    </ul>
+    <div class="menu-footer">© <span id="menuYear"></span> RS SportsFy</div>
   </div>
-
-  <ul>
-    <li onclick="alert('Contact us: info.rssportsfy@gmail.com'); closeSidebar();">☎️ Contact</li>
-    <li onclick="alert('About RS Sports: We are a free live sports streaming platform.'); closeSidebar();">ℹ️ About</li>
-    <li onclick="window.open('https://t.me/rs_sports_live', '_blank'); closeSidebar();">📢 Join Telegram</li>
-    <li onclick="window.open('https://www.facebook.com/profile.php?id=61557053916041', '_blank'); closeSidebar();">📘 Facebook Page</li>
-    <li onclick="alert('We respect your privacy. We do not collect any personal data.'); closeSidebar();">🔒 Privacy Policy</li>
-    <li onclick="shareSite(); closeSidebar();">🔗 Share This App</li>
-  </ul>
-
-  <!-- Copyright section -->
-  <div style="text-align: center; padding: 10px; font-size: 13px; color: #aaa; border-top: 1px solid #444;">
-    © 2025 RS SportsFy. All rights reserved.
-  </div>
-</nav>
 
 <!-- Overlay -->
 <div id="overlay"></div>
