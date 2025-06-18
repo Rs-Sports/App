@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>লাইভ টিভি - Rs Sports</title>
 
-  <!-- Video.js CDN -->
   <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
   <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
 
@@ -25,14 +24,14 @@
     }
 
     .video-wrapper {
-  width: 100%;
-  max-width: 1200px;  /* আগের ছিল 1000px, এখন বড় করা হলো */
-  aspect-ratio: 16 / 9;
-  background: #000;
-  border-radius: 15px;
-  box-shadow: 0 0 35px rgba(0, 255, 0, 0.6);
-  overflow: hidden;
-}
+      width: 100%;
+      max-width: 1300px;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 15px;
+      box-shadow: 0 0 35px rgba(0, 255, 0, 0.6);
+      overflow: hidden;
+    }
 
     .video-js {
       width: 100%;
@@ -73,59 +72,38 @@
     .channel-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 18px;
-      padding: 0;
-      max-width: 100%;
-      margin: auto;
+      gap: 20px;
+      justify-items: center;
     }
 
     .channel-item {
-      background: linear-gradient(145deg, #1c1c1c, #262626);
+      background: #fff;
       border-radius: 50%;
-      padding: 12px;
-      box-shadow: 0 4px 10px rgba(0,255,0,0.2), inset 0 0 8px rgba(0,255,0,0.1);
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 80px;
+      width: 80px;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100px;
-      width: 100px;
-      margin: auto;
+      box-shadow: 0 0 6px 3px rgba(0, 122, 255, 0.7);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
     }
 
     .channel-item:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 20px rgba(0,255,0,0.6);
+      transform: scale(1.05);
+      box-shadow: 0 0 10px 5px rgba(0, 255, 0, 0.6);
     }
 
     .channel-item img {
-      width: 60px;
-      height: 60px;
-      object-fit: contain;
+      width: 75px;
+      height: 75px;
       border-radius: 50%;
-      filter: brightness(0.95);
+      object-fit: contain;
     }
 
-    @media (max-width: 500px) {
-      .channel-item {
-        height: 80px;
-        width: 80px;
-      }
-      .channel-item img {
-        width: 50px;
-        height: 50px;
-      }
-    }
-  
-    /* back-button নিচে ডানে ফিক্সড */
     .back-button {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      margin: 0;
-      text-align: center;
-      z-index: 1000;
+      text-align: right;
+      margin: 15px;
     }
 
     .back-button a {
@@ -137,22 +115,27 @@
       text-decoration: none;
       font-weight: bold;
       box-shadow: 0 0 10px rgba(0, 255, 100, 0.5);
-      transition: background 0.3s;
     }
 
     .back-button a:hover {
-      background: #f0100c;
+      background: #c90b09;
     }
 
+    @media (max-width: 500px) {
+      .channel-item {
+        height: 70px;
+        width: 70px;
+      }
+
+      .channel-item img {
+        width: 65px;
+        height: 65px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <div class="back-button">
-    <a href="index.html">🔙</a> <!-- হোম পেজে নিয়ে যাবে -->
-  </div>
-
-  <!-- ভিডিও প্লেয়ার -->
   <div class="video-frame">
     <div class="video-wrapper">
       <video
@@ -166,42 +149,60 @@
     </div>
   </div>
 
-  <!-- রানিং টেক্সট -->
   <div class="marquee-container">
     <marquee behavior="scroll" direction="left">
       🔴 আজকের খেলা: আর্জেন্টিনা বনাম ব্রাজিল | রাত ৮:৩০ | Rs Sports অ্যাপে সরাসরি দেখুন!
     </marquee>
   </div>
 
-  <!-- ক্যাটাগরি -->
   <div class="category-bar">📺 জনপ্রিয় বাংলা চ্যানেল</div>
 
-  <!-- প্লেলিস্ট ফ্রেম সহ -->
   <div class="playlist-frame">
     <div class="channel-grid">
       <div class="channel-item" onclick="changeStream('https://spstr.abntv.live/hls/psstream.m3u8')">
-        <img src="https://via.placeholder.com/80x60?text=Summit" alt="Summit TV">
+        <img src="https://imgur.com/6qfnRA1.jpg" alt="B-TV">
       </div>
-      <div class="channel-item" onclick="changeStream('https://tv.ekattor.tv/hls/ekattor.m3u8')">
-        <img src="https://via.placeholder.com/80x60?text=Ekattor" alt="Ekattor TV">
+      <div class="channel-item" onclick="changeStream('https://link2.m3u8')">
+        <img src="https://imgur.com/tqJxOxB.jpg" alt="Boishakhi TV">
       </div>
-      <div class="channel-item" onclick="changeStream('https://boishakhi.live/hls/boishakhi.m3u8')">
-        <img src="https://via.placeholder.com/80x60?text=Boishakhi" alt="Boishakhi TV">
+      <div class="channel-item" onclick="changeStream('https://boishakhi.sonarbanglatv.com/boishakhi/boishakhitv/index.m3u8')">
+        <img src="https://imgur.com/RSUOaNs.jpg" alt="Ekattor TV">
       </div>
-    
-      <div class="channel-item" onclick="changeStream('https://rtv.stream/hls/rtv.m3u8')">
-        <img src="https://via.placeholder.com/80x60?text=RTV" alt="RTV">
+<div class="channel-item" onclick="changeStream('https://spstr.abntv.live/hls/psstream.m3u8')">
+        <img src="https://imgur.com/6qfnRA1.jpg" alt="B-TV">
       </div>
-      <div class="channel-item" onclick="changeStream('https://atn.stream/hls/atn.m3u8')">
-        <img src="https://via.placeholder.com/80x60?text=ATN+Bangla" alt="ATN Bangla">
+      <div class="channel-item" onclick="changeStream('https://link2.m3u8')">
+        <img src="https://imgur.com/tqJxOxB.jpg" alt="Desh TV">
       </div>
-      <div class="channel-item" onclick="changeStream('https://ntv.stream/hls/ntv.m3u8')">
-        <img src="https://via.placeholder.com/80x60?text=NTV" alt="NTV">
+      <div class="channel-item" onclick="changeStream('https://link3.m3u8')">
+        <img src="https://imgur.com/RSUOaNs.jpg" alt="Ekattor TV">
       </div>
+<div class="channel-item" onclick="changeStream('https://spstr.abntv.live/hls/psstream.m3u8')">
+        <img src="https://imgur.com/6qfnRA1.jpg" alt="B-TV">
+      </div>
+      <div class="channel-item" onclick="changeStream('https://link2.m3u8')">
+        <img src="https://imgur.com/tqJxOxB.jpg" alt="Desh TV">
+      </div>
+      <div class="channel-item" onclick="changeStream('https://link3.m3u8')">
+        <img src="https://imgur.com/RSUOaNs.jpg" alt="Ekattor TV">
+      </div>
+<div class="channel-item" onclick="changeStream('https://spstr.abntv.live/hls/psstream.m3u8')">
+        <img src="https://imgur.com/6qfnRA1.jpg" alt="B-TV">
+      </div>
+      <div class="channel-item" onclick="changeStream('https://link2.m3u8')">
+        <img src="https://imgur.com/tqJxOxB.jpg" alt="Desh TV">
+      </div>
+      <div class="channel-item" onclick="changeStream('https://link3.m3u8')">
+        <img src="https://imgur.com/RSUOaNs.jpg" alt="Ekattor TV">
+      </div>
+      <!-- Add more channels similarly -->
     </div>
   </div>
 
-  <!-- স্ক্রিপ্ট -->
+  <div class="back-button">
+    <a href="index.html">🔙</a>
+  </div>
+
   <script>
     function changeStream(url) {
       const player = videojs('live-video');
