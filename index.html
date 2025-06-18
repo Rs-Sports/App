@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="bn">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,7 +41,7 @@
       height: 100vh;
       background: #111;
       border-right: 2px solid #00ff66;
-      padding-top: 60px;
+      padding-top: 20px;
       box-sizing: border-box;
       transition: left 0.3s ease;
       z-index: 1100;
@@ -215,11 +216,17 @@
     }
   </style>
 </head>
-<body>  <header>
+<body>
+  <header>
     <div class="icon" id="menu-toggle">☰</div>
     <h1>RS SportsFy</h1>
     <div class="icon reload-btn" onclick="location.reload();">⟳</div>
-  </header>  <nav id="sidebar">
+  </header>
+
+  <nav id="sidebar">
+    <div style="text-align: center; padding: 20px 0; background: rgba(0, 255, 102, 0.05); margin: 0 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,255,102,0.2), inset 0 0 8px rgba(0,255,102,0.1); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);">
+      <img src="https://imgur.com/a/iFxizq7.jpeg" alt="Logo" style="width: 90px; height: 90px; border-radius: 50%; box-shadow: 0 0 12px #00ff66;" />
+    </div>
     <ul>
       <li onclick="alert('Contact us: info.rssportsfy@gmail.com'); closeSidebar();">☎️ Contact</li>
       <li onclick="alert('We are a free live sports streaming platform.'); closeSidebar();">ℹ️ About</li>
@@ -228,25 +235,38 @@
       <li onclick="alert('We respect your privacy.'); closeSidebar();">🔒 Privacy Policy</li>
       <li onclick="navigator.share ? navigator.share({ title: 'RS SportsFy', text: 'Watch live!', url: location.href }) : alert('Not supported'); closeSidebar();">🔗 Share</li>
     </ul>
+    <div style="text-align:center; padding: 12px; font-size: 13px; color: #888; border-top: 1px solid #222;">
+      © 2025 RS SportsFy
+    </div>
   </nav>
-  <div id="overlay"></div><video id="hlsPlayer" class="video-js vjs-default-skin" controls autoplay preload="auto" playsinline
 
-> </video>
+  <div id="overlay"></div>
+  <video id="hlsPlayer" class="video-js vjs-default-skin" controls autoplay preload="auto" playsinline></video>
 
   <div class="marquee">
     <span>আজকের খেলা: বাংলাদেশ বনাম শ্রীলঙ্কা (LIVE)</span>
-  </div>  <div class="category-tabs">
-    <button class="active" onclick="filterMatches('all')">All</button>
-    <button onclick="filterMatches('cricket')">🏏 Cricket</button>
-    <button onclick="filterMatches('football')">⚽ Football</button>
-    <button onclick="filterMatches('upcoming')">🕒 Upcoming</button>
-  </div>  <div id="matches"></div>  <div class="bottom-buttons">
-    <button onclick="alert('Football section coming soon!')">⚽ Football</button>
-    <button onclick="filterMatches('all')">
+  </div>
+
+  <div class="category-tabs">
+    <button class="active" onclick="filterMatches('all', event)">All</button>
+    <button onclick="filterMatches('cricket', event)">🏏 Cricket</button>
+    <button onclick="filterMatches('football', event)">⚽ Football</button>
+    <button onclick="filterMatches('upcoming', event)">🕒 Upcoming</button>
+  </div>
+
+  <div id="matches"></div>
+
+  <!-- ✅ Updated Football Button -->
+  <div class="bottom-buttons">
+    <button onclick="window.open('football.html', '_blank')">⚽ Football</button>
+    <button onclick="filterMatches('all', event)">
       <span class="dot"></span> Live
     </button>
     <button onclick="window.open('video.html', '_blank')">🎬 Highlights</button>
-  </div>  <script src="https://vjs.zencdn.net/8.20.0/video.min.js"></script>  <script>
+  </div>
+
+  <script src="https://vjs.zencdn.net/8.20.0/video.min.js"></script>
+  <script>
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
     document.getElementById('menu-toggle').addEventListener('click', () => {
@@ -260,23 +280,47 @@
     }
 
     const data = {
-      defaultStream: "https://edge3-moblive.yuppcdn.net/drm/smil:tencricketdrm.smil/index.m3u8",
-      marquee: "আজকের খেলা: বাংলাদেশ বনাম শ্রীলঙ্কা (LIVE)",
-      matches: {
-        match1: {
-          category: "cricket",
-          title: "বাংলাদেশ বনাম শ্রীলঙ্কা",
-          time: "রাত ৪:৩০",
-          timeColor: "#00ff66",
-          team1Logo: "https://imgur.com/iBzSWzK.jpeg",
-          team1Name: "বাংলাদেশ",
-          team2Logo: "https://imgur.com/iBzSWzK.jpeg",
-          team2Name: "শ্রীলঙ্কা",
-          streamURL: "https://edge3-moblive.yuppcdn.net/drm/smil:tencricketdrm.smil/index.m3u8",
-          isLive: true
-        }
-      }
-    };
+  defaultStream: "https://edge3-moblive.yuppcdn.net/drm/smil:tencricketdrm.smil/index.m3u8",
+  marquee: "আজকের খেলা: বাংলাদেশ বনাম শ্রীলঙ্কা (LIVE)",
+  matches: {
+    match1: {
+      category: "cricket",
+      title: "বাংলাদেশ বনাম শ্রীলঙ্কা",
+      time: "রাত ৪:৩০",
+      timeColor: "#00ff66",
+      team1Logo: "https://imgur.com/iBzSWzK.jpeg",
+      team1Name: "বাংলাদেশ",
+      team2Logo: "https://imgur.com/iBzSWzK.jpeg",
+      team2Name: "শ্রীলঙ্কা",
+      streamURL: "https://edge3-moblive.yuppcdn.net/drm/smil:tencricketdrm.smil/index.m3u8",
+      isLive: true
+    },
+    match2: {
+      category: "football",
+      title: "আর্জেন্টিনা বনাম ব্রাজিল",
+      time: "রাত ২:০০",
+      timeColor: "#ffcc00",
+      team1Logo: "https://upload.wikimedia.org/wikipedia/en/1/1f/Argentine_Football_Association_logo.svg",
+      team1Name: "আর্জেন্টিনা",
+      team2Logo: "https://upload.wikimedia.org/wikipedia/en/b/bf/Brazil_national_football_team_logo.svg",
+      team2Name: "ব্রাজিল",
+      streamURL: "https://example.com/argentina-vs-brazil.m3u8",
+      isLive: true
+    },
+    match3: {
+      category: "upcoming",
+      title: "ইংল্যান্ড বনাম ফ্রান্স",
+      time: "আগামীকাল সন্ধ্যা ৭টা",
+      timeColor: "#999999",
+      team1Logo: "https://upload.wikimedia.org/wikipedia/en/b/be/England_national_football_team_three_lions.svg",
+      team1Name: "ইংল্যান্ড",
+      team2Logo: "https://upload.wikimedia.org/wikipedia/en/c/c3/France_national_football_team_seal.svg",
+      team2Name: "ফ্রান্স",
+      streamURL: "",
+      isLive: false
+    }
+  }
+};
 
     const player = videojs('hlsPlayer', {
       fluid: true,
@@ -295,7 +339,12 @@
       player.play();
     }
 
-    function filterMatches(category) {
+    function filterMatches(category, event) {
+      document.querySelectorAll('.category-tabs button').forEach(btn => btn.classList.remove('active'));
+      if (event && event.target) {
+        event.target.classList.add('active');
+      }
+
       const matchesDiv = document.getElementById('matches');
       matchesDiv.innerHTML = '';
       Object.values(data.matches).forEach(match => {
@@ -311,7 +360,7 @@
             <div class="teams">
               <img src="${match.team1Logo}" class="team-logo" alt="${match.team1Name}">
               <div class="vs-container">
-                ${match.isLive ? '<div class="live-indicator">🔴 LIVE</div>' : ''}
+                ${match.isLive ? '<div class="live-indicator">LIVE</div>' : ''}
                 <div class="vs-text">${match.team1Name} VS ${match.team2Name}</div>
               </div>
               <img src="${match.team2Logo}" class="team-logo" alt="${match.team2Name}">
@@ -327,5 +376,6 @@
       playMatch(data.defaultStream);
       filterMatches('all');
     }
-  </script></body>
+  </script>
+</body>
 </html>
